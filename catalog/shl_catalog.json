@@ -1,0 +1,413 @@
+[
+  {
+    "name": "Verify Numerical Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-numerical-reasoning/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": true,
+    "description": "Measures numerical reasoning ability; suitable for graduate and managerial roles."
+  },
+  {
+    "name": "Verify Verbal Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-verbal-reasoning/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": true,
+    "description": "Assesses ability to evaluate written information and draw logical conclusions."
+  },
+  {
+    "name": "Verify Inductive Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-inductive-reasoning/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": true,
+    "description": "Measures abstract reasoning via identifying patterns in sequences of shapes."
+  },
+  {
+    "name": "Verify Deductive Reasoning",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-deductive-reasoning/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Assesses logical deductive reasoning from given premises."
+  },
+  {
+    "name": "Verify Mechanical Comprehension",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-mechanical-comprehension/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Measures understanding of mechanical and physical principles for technical roles."
+  },
+  {
+    "name": "OPQ32r",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/opq32r/",
+    "test_types": [
+      "P"
+    ],
+    "test_type_labels": [
+      "Personality & Behavior"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Occupational Personality Questionnaire \u2014 the world's most widely used personality measure for work settings. 32 scales covering thinking styles, relationships, and emotions."
+  },
+  {
+    "name": "MQ (Motivation Questionnaire)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/motivation-questionnaire-mq/",
+    "test_types": [
+      "M"
+    ],
+    "test_type_labels": [
+      "Motivation"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Measures 18 dimensions of motivation to understand what energises and drives an individual at work."
+  },
+  {
+    "name": "Java 8 (New)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/java-8-new/",
+    "test_types": [
+      "K"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Tests knowledge of Java 8 programming language, OOP, collections, streams, and APIs."
+  },
+  {
+    "name": "Core Java (Advanced Level)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/core-java-advanced-level-new/",
+    "test_types": [
+      "K"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Advanced Java programming assessment covering concurrency, design patterns, JVM internals."
+  },
+  {
+    "name": "Python (New)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/python-new/",
+    "test_types": [
+      "K"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Assesses Python programming skills including data structures, OOP, and standard library usage."
+  },
+  {
+    "name": "SQL (New)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/sql-new/",
+    "test_types": [
+      "K"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Tests SQL query writing, joins, aggregations, and database design concepts."
+  },
+  {
+    "name": "Microsoft .NET (New)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/microsoft-net-new/",
+    "test_types": [
+      "K"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Assesses .NET framework knowledge including C#, ASP.NET, and related technologies."
+  },
+  {
+    "name": "Situational Judgement for Customer Service",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/customer-service-scenario/",
+    "test_types": [
+      "B"
+    ],
+    "test_type_labels": [
+      "Biodata & Situational Judgement"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Scenario-based assessment measuring judgement in customer-facing situations."
+  },
+  {
+    "name": "Graduate Management Reasoning Test (GMRT)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/graduate-management-reasoning-test-gmrt/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Integrated verbal and numerical reasoning for graduate and management-level candidates."
+  },
+  {
+    "name": "Occupational Personality Questionnaire (OPQ32)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/occupational-personality-questionnaire-opq32/",
+    "test_types": [
+      "P"
+    ],
+    "test_type_labels": [
+      "Personality & Behavior"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Full-length 32-scale personality questionnaire for senior and specialist roles."
+  },
+  {
+    "name": "Leadership Report",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/leadership-report/",
+    "test_types": [
+      "C"
+    ],
+    "test_type_labels": [
+      "Competencies"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Derived from OPQ32r, identifies leadership potential and style for management roles."
+  },
+  {
+    "name": "Sales Assessment",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/sales-assessment/",
+    "test_types": [
+      "B"
+    ],
+    "test_type_labels": [
+      "Biodata & Situational Judgement"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Situational judgement test measuring sales behaviours and customer focus."
+  },
+  {
+    "name": "Verify Interactive \u2014 Java",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-interactive-java/",
+    "test_types": [
+      "K",
+      "S"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills",
+      "Simulations"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Hands-on coding simulation for Java: write and debug code in a real IDE-like environment."
+  },
+  {
+    "name": "Verify Interactive \u2014 Python",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-interactive-python/",
+    "test_types": [
+      "K",
+      "S"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills",
+      "Simulations"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Hands-on coding simulation for Python."
+  },
+  {
+    "name": "Workplace English Language Test (WELT)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/workplace-english-language-test/",
+    "test_types": [
+      "K"
+    ],
+    "test_type_labels": [
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Assesses English language proficiency in a workplace context \u2014 reading, listening, writing."
+  },
+  {
+    "name": "Universal Competency Framework (UCF) 360",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/universal-competency-framework-ucf-360/",
+    "test_types": [
+      "D"
+    ],
+    "test_type_labels": [
+      "Development & 360"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "360-degree feedback tool aligned to SHL's Universal Competency Framework for development."
+  },
+  {
+    "name": "Verify Calculation",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/verify-calculation/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Measures speed and accuracy of numerical calculations for clerical and administrative roles."
+  },
+  {
+    "name": "Hogan Personality Inventory (HPI)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/hogan-personality-inventory/",
+    "test_types": [
+      "P"
+    ],
+    "test_type_labels": [
+      "Personality & Behavior"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Measures bright-side personality characteristics predictive of occupational success."
+  },
+  {
+    "name": "Dependability and Safety Instrument (DSI)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/dependability-and-safety-instrument-dsi/",
+    "test_types": [
+      "P"
+    ],
+    "test_type_labels": [
+      "Personality & Behavior"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Measures integrity, reliability, and safety attitudes. Predicts safety-relevant behaviour and procedure compliance across sectors including chemical, industrial, and manufacturing."
+  },
+  {
+    "name": "Graduate Scenarios",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/graduate-scenarios/",
+    "test_types": [
+      "B"
+    ],
+    "test_type_labels": [
+      "Biodata & Situational Judgment"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Situational judgement test designed for graduate-level candidates. Measures work-context decision making and professional judgement."
+  },
+  {
+    "name": "SHL Verify Interactive G+",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/shl-verify-interactive-g/",
+    "test_types": [
+      "A"
+    ],
+    "test_type_labels": [
+      "Ability & Aptitude"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": true,
+    "description": "Adaptive cognitive ability test covering inductive, numerical, and deductive reasoning. Suitable for graduate and professional-level selection."
+  },
+  {
+    "name": "Contact Center Call Simulation (New)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/contact-center-call-simulation-new/",
+    "test_types": [
+      "S"
+    ],
+    "test_type_labels": [
+      "Simulations"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Standalone simulation of an inbound customer service call. Used for high-volume entry-level contact centre screening."
+  },
+  {
+    "name": "Entry Level Customer Serv - Retail & Contact Center",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/entry-level-customer-serv-retail-and-contact-center/",
+    "test_types": [
+      "P",
+      "C"
+    ],
+    "test_type_labels": [
+      "Personality & Behavior",
+      "Competencies"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Personality and competency measure for entry-level customer service and retail roles. Assesses service orientation and behavioural fit."
+  },
+  {
+    "name": "Global Skills Assessment",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/global-skills-assessment/",
+    "test_types": [
+      "C",
+      "K"
+    ],
+    "test_type_labels": [
+      "Competencies",
+      "Knowledge & Skills"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Self-reported skills assessment measuring competencies and knowledge for talent audits and reskilling initiatives."
+  },
+  {
+    "name": "OPQ Leadership Report",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/opq-leadership-report/",
+    "test_types": [
+      "P"
+    ],
+    "test_type_labels": [
+      "Personality & Behavior"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Derived from OPQ32r. Identifies leadership potential and style for senior management and executive selection."
+  },
+  {
+    "name": "Motivation Questionnaire (MQ)",
+    "url": "https://www.shl.com/solutions/products/product-catalog/view/motivation-questionnaire-mq/",
+    "test_types": [
+      "M"
+    ],
+    "test_type_labels": [
+      "Motivation"
+    ],
+    "remote_testing": true,
+    "adaptive_irt": false,
+    "description": "Measures 18 dimensions of motivation to understand what energises and drives an individual at work."
+  }
+]
