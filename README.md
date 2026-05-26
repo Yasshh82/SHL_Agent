@@ -1,0 +1,201 @@
+# SHL Assessment Advisor 🎯
+
+A conversational AI agent that helps hiring managers navigate the SHL Individual Test Solutions catalog. Describe a role in plain language, and the agent asks smart clarifying questions, then returns a shortlist of 1–10 relevant SHL assessments — complete with catalog URLs. It handles mid-conversation refinements, comparison questions, and refuses anything outside its scope.
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| LLM | **Google Gemini 2.5 Flash** | Free-tier inference; fast enough to stay within the 30s timeout |
+| Retrieval | **Custom BM25** (pure Python) | Zero-dependency keyword search over the catalog; no GPU needed |
+| API | **FastAPI + Uvicorn** | Async, stateless `POST /chat` endpoint matching the assignment spec |
+| Data | **JSON flat file** (`shl_catalog.json`) | Lightweight catalog store; no database needed for ≤31 items |
+| Env management | **python-dotenv** | Keeps API keys out of source code |
+| Scraping | **BeautifulSoup4 + requests** | One-time harvest of the live SHL product catalog |
+| Validation | **Pydantic v2** | Strict request/response schema enforcement |
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Yasshh82/SHL_Agent.git
+cd shl-assessment-advisor
+```
+
+### 2. Create and activate a virtual environment
+
+```bash
+# Windows
+python -m venv myvenv
+myvenv\Scripts\activate
+
+# macOS / Linux
+python -m venv myvenv
+source myvenv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Set up your environment variables
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and add your Gemini API key:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+### 5. Build the catalog (choose one)
+
+**Option A — Scrape live from shl.com** *(requires internet access)*
+
+```bash
+python catalog/scrape_catalog.py
+```
+
+**Option B — Use the hand-curated seed catalog** *(works offline, recommended for deployment)*
+
+```bash
+python catalog/seed_catalog.py
+```
+
+### 6. Start the server
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+### 7. Run the test suite
+
+```bash
+python test_agent.py http://localhost:8000
+```
+
+### 8. Chat interactively (optional)
+
+```bash
+python chat.py
+```
+
+---
+
+## Project Structure
+
+```
+shl-assessment-advisor/
+├── app/
+│   ├── main.py              # FastAPI app — /health and /chat endpoints
+│   └── agent.py             # Core agent logic — LLM calls, guards, post-processing
+├── catalog/
+│   ├── catalog_store.py     # BM25 retrieval engine + catalog singleton
+│   ├── scrape_catalog.py    # One-time web scraper for shl.com
+│   ├── seed_catalog.py      # Hand-curated fallback catalog (31 products)
+│   └── shl_catalog.json     # The catalog data consumed at runtime
+├── chat.py                  # Interactive CLI client for local testing
+├── test_agent.py            # 15 end-to-end behavioral tests
+├── requirements.txt         # Python dependencies
+├── .env.example             # Environment variable template
+└── .gitignore
+```
+
+### File-by-file breakdown
+
+**`app/main.py`**
+The FastAPI application. Defines the two required endpoints (`GET /health`, `POST /chat`), enforces the Pydantic request/response schema, and adds CORS middleware for browser clients. Stateless by design — no session storage.
+
+**`app/agent.py`**
+The brain of the system. Handles pre-LLM regex guards (refusals, vague query detection, drop instructions), type-aware catalog context injection, the Gemini API call, JSON parsing of the LLM response, and a four-stage post-processing pipeline (comparison override → drop enforcement → type re-ranking → BM25 fallback). If Gemini times out or fails, BM25 results are returned directly so the endpoint never returns empty.
+
+**`catalog/catalog_store.py`**
+Loads `shl_catalog.json` once at startup (singleton pattern) and builds a BM25 inverted index over product name + description + type labels. Exposes `search()` with optional type filtering, `get_by_name()` with three-pass fuzzy matching, `get_by_url_slug()` for hallucinated URL recovery, and `summary_for_llm()` for compact context injection.
+
+**`catalog/scrape_catalog.py`**
+A one-time scraper that hits the paginated SHL product catalog (`?type=1` filter for Individual Test Solutions), parses product names, URLs, test-type codes, remote-testing flags, and descriptions, then writes `shl_catalog.json`. Includes a polite crawl delay. Run once before deployment.
+
+**`catalog/seed_catalog.py`**
+A hand-curated fallback with 31 known SHL products covering all type codes (A, K, P, B, M, S, E, C, D). Generates `shl_catalog.json` without internet access — useful in cloud environments where shl.com is unreachable or the scraper can't authenticate.
+
+**`catalog/shl_catalog.json`**
+The flat-file catalog store consumed at runtime. Each entry contains `name`, `url`, `test_types`, `test_type_labels`, `remote_testing`, `adaptive_irt`, and `description`. Generated by either scraper or seed script.
+
+**`chat.py`**
+A simple interactive CLI client that sends requests to the running FastAPI server and pretty-prints agent replies and recommendations. Useful for manual testing and demos.
+
+**`test_agent.py`**
+15 end-to-end behavioral tests covering health check, vague query handling, Java/Python/data-analyst recommendations, salary and prompt-injection refusals, personality refinement, comparison questions, full JD input, turn-cap compliance, senior leadership patterns, safety-critical roles, `end_of_conversation` schema, contact centre screening, and drop-item refinement.
+
+**`.env.example`**
+Template for required environment variables. Copy to `.env` and fill in your Gemini API key. The `.env` file is git-ignored.
+
+---
+
+## API Reference
+
+### `GET /health`
+Returns `{"status": "ok"}` with HTTP 200. Allows up to 2 minutes for cold-start hosts.
+
+### `POST /chat`
+
+**Request**
+```json
+{
+  "messages": [
+    {"role": "user", "content": "I am hiring a mid-level Java developer"},
+    {"role": "assistant", "content": "Should I include a cognitive or personality measure?"},
+    {"role": "user", "content": "Yes, include both"}
+  ]
+}
+```
+
+**Response**
+```json
+{
+  "reply": "Here are 5 assessments for a mid-level Java developer.",
+  "recommendations": [
+    {"name": "Java 8 (New)", "url": "https://www.shl.com/...", "test_type": "K"},
+    {"name": "OPQ32r",       "url": "https://www.shl.com/...", "test_type": "P"}
+  ],
+  "end_of_conversation": false
+}
+```
+
+`recommendations` is an empty array while the agent is gathering context or refusing. `end_of_conversation` is `true` only when the agent considers the task complete.
+
+---
+
+## Future Improvements
+
+- **Larger catalog coverage** — The seed catalog covers 31 products. Scraping and regularly syncing the full live SHL catalog (including pre-packaged solutions for reference) would improve recall significantly.
+
+- **Semantic retrieval** — Replace BM25 with a lightweight embedding model (e.g. `all-MiniLM-L6-v2` via sentence-transformers) and a vector store like FAISS or Chroma. This would improve retrieval for paraphrased or domain-shifted queries where keyword overlap is low.
+
+- **Conversation memory / session persistence** — The API is currently stateless (history is re-sent every call). Storing session state server-side with a TTL cache (e.g. Redis) would reduce payload size in long conversations.
+
+- **Structured tool calling** — Use Gemini's native function-calling / tool-use feature instead of prompting for raw JSON. This would eliminate the need for the brace-depth JSON parser and make output parsing more robust.
+
+- **Streaming responses** — Expose a `POST /chat/stream` endpoint using FastAPI's `StreamingResponse` and Gemini's streaming API for a more responsive user experience in UI clients.
+
+- **Evaluation pipeline** — Automate Recall@10 measurement against the 10 public conversation traces on every code change, so regressions are caught before deployment.
+
+- **Admin catalog refresh endpoint** — A `POST /catalog/refresh` endpoint (protected by an API key) that re-runs the scraper and hot-reloads the BM25 index without a server restart.
+
+---
+
+## Author
+
+Yash Gupta  
+[Email](yash8740gupta@gmail.com)  
+[LinkedIn](https://www.linkedin.com/in/yash-gupta82/)
