@@ -293,22 +293,11 @@ def send_message(messages: list) -> dict | None:
 def render_recommendations(recs: list):
     if not recs:
         return
-    st.markdown('<div class="rec-section">', unsafe_allow_html=True)
-    st.markdown(f'<div class="rec-section-title">📋 {len(recs)} Assessment{"s" if len(recs) != 1 else ""} Recommended</div>', unsafe_allow_html=True)
+    st.markdown(f'### 📋 {len(recs)} Assessment{"s" if len(recs) != 1 else ""} Recommended')
     for rec in recs:
         t = rec.get("test_type", "A")
         label = TYPE_LABELS.get(t, t)
-        badge_class = f"badge-{t}"
-        st.markdown(f"""
-        <div class="rec-card">
-            <div class="rec-card-header">
-                <span class="rec-name">{rec['name']}</span>
-                <span class="rec-badge {badge_class}">{t} — {label}</span>
-            </div>
-            <div class="rec-url"><a href="{rec['url']}" target="_blank">🔗 {rec['url']}</a></div>
-        </div>
-        """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown(f"**{rec['name']}**  \n{t} — {label}  \n🔗 {rec['url']}")
 
 
 # ── Header ─────────────────────────────────────────────────────────────────────
@@ -338,44 +327,36 @@ if st.session_state.api_ok:
 else:
     st.markdown(f'<div class="status-pill pill-fail"><div class="pill-dot dot-fail"></div>API offline — start your server at {API_BASE}</div>', unsafe_allow_html=True)
 
-# ── Chat history ───────────────────────────────────────────────────────────────
+# ── Chat history (scrollable container) ────────────────────────────────────────
 
-for i, msg in enumerate(st.session_state.messages):
-    if msg["role"] == "user":
-        st.markdown('<div class="label-user">You</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="bubble-user">{msg["content"]}</div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="label-agent">🎯 Advisor</div>', unsafe_allow_html=True)
-        recs = st.session_state.recs_history.get(i, [])
-        # Build agent bubble with optional recs inside
-        rec_html = ""
-        if recs:
-            rec_items = ""
-            for rec in recs:
-                t = rec.get("test_type", "A")
-                label = TYPE_LABELS.get(t, t)
-                rec_items += f"""
-                <div class="rec-card">
-                    <div class="rec-card-header">
-                        <span class="rec-name">{rec['name']}</span>
-                        <span class="rec-badge badge-{t}">{t} — {label}</span>
-                    </div>
-                    <div class="rec-url"><a href="{rec['url']}" target="_blank">🔗 {rec['url']}</a></div>
-                </div>"""
-            rec_html = f"""
-            <div class="rec-section">
-                <div class="rec-section-title">📋 {len(recs)} Assessment{"s" if len(recs) != 1 else ""} Recommended</div>
-                {rec_items}
-            </div>"""
+chat_container = st.container(height=500, border=False)
+with chat_container:
+    for i, msg in enumerate(st.session_state.messages):
+        if msg["role"] == "user":
+            st.markdown('<div class="label-user">You</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="bubble-user">{msg["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="label-agent">🎯 Advisor</div>', unsafe_allow_html=True)
+            recs = st.session_state.recs_history.get(i, [])
+            # Build agent bubble with optional recs inside
+            rec_html = ""
+            if recs:
+                rec_items = []
+                for rec in recs:
+                    t = rec.get("test_type", "A")
+                    label = TYPE_LABELS.get(t, t)
+                    rec_items.append(
+                        f"<strong>{rec['name']}</strong><br>{t} — {label}<br>🔗 <a href='{rec['url']}' target='_blank'>{rec['url']}</a>"
+                    )
+                rec_html = "<br><br>" + "<br><br>".join(rec_items)
 
-        st.markdown(f'<div class="bubble-agent">{msg["content"]}{rec_html}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="bubble-agent">{msg["content"]}{rec_html}</div>', unsafe_allow_html=True)
 
-# ── End-of-conversation banner ─────────────────────────────────────────────────
+    # ── End-of-conversation banner ──────────────────────────────────────────────
+    if st.session_state.eoc:
+        st.markdown('<div class="eoc-banner">✅ The advisor has completed your assessment selection. Click <b>New Conversation</b> in the sidebar to start over.</div>', unsafe_allow_html=True)
 
-if st.session_state.eoc:
-    st.markdown('<div class="eoc-banner">✅ The advisor has completed your assessment selection. Click <b>New Conversation</b> to start over.</div>', unsafe_allow_html=True)
-
-# ── Input area ─────────────────────────────────────────────────────────────────
+# ── Input area (sticky at bottom) ───────────────────────────────────────────────
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -388,11 +369,9 @@ if not st.session_state.eoc:
         key="user_input",
     )
 
-    col_send, col_clear = st.columns([3, 1])
+    col_send = st.columns(1)[0]
     with col_send:
         send_clicked = st.button("Send →", use_container_width=True)
-    with col_clear:
-        clear_clicked = st.button("New Conversation", use_container_width=True)
 
     if send_clicked and user_input.strip():
         if not st.session_state.api_ok:
@@ -422,22 +401,19 @@ if not st.session_state.eoc:
 
             st.rerun()
 
-    if clear_clicked:
-        st.session_state.messages = []
-        st.session_state.recs_history = {}
-        st.session_state.eoc = False
-        st.rerun()
-
 else:
-    if st.button("New Conversation", use_container_width=True):
-        st.session_state.messages = []
-        st.session_state.recs_history = {}
-        st.session_state.eoc = False
-        st.rerun()
+    st.write("")  # Placeholder if end of conversation
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 
 with st.sidebar:
+    if st.button("🔄 New Conversation", use_container_width=True):
+        st.session_state.messages = []
+        st.session_state.recs_history = {}
+        st.session_state.eoc = False
+        st.rerun()
+
+    st.markdown("---")
     st.markdown("### 💡 Example prompts")
     examples = [
         "I'm hiring a mid-level Java developer who works with stakeholders",
@@ -468,7 +444,6 @@ with st.sidebar:
                     st.session_state.messages.pop()
                 st.rerun()
 
-    st.markdown("---")
     st.markdown("### 🔖 Test type legend")
     for code, label in TYPE_LABELS.items():
         st.markdown(f"**`{code}`** — {label}")
