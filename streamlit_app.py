@@ -195,20 +195,24 @@ st.markdown("""
 
     /* ── Input area ── */
     .stTextArea textarea {
-        border-radius: 12px !important;
-        border: 1.5px solid #d0d7df !important;
-        font-size: 0.93rem !important;
-        resize: none !important;
+        border-radius: 10px !important;
+        border: 1px solid #d6dbe1 !important;
+        font-size: 0.95rem !important;
         background: #ffffff !important;
         color: #1a1a2e !important;
         caret-color: #0f3460 !important;
+        padding: 10px !important;
+        box-sizing: border-box !important;
+        min-height: 48px !important;
+        max-height: 220px !important;
+        height: auto !important;
+        resize: vertical !important;
+        overflow: auto !important;
     }
-    .stTextArea textarea:placeholder {
-        color: #7f8c9a !important;
-    }
+    .stTextArea textarea::placeholder { color: #7f8c9a !important; }
     .stTextArea textarea:focus {
         border-color: #0f3460 !important;
-        box-shadow: 0 0 0 3px rgba(15,52,96,0.1) !important;
+        box-shadow: 0 0 0 4px rgba(15,52,96,0.06) !important;
     }
     .stButton > button {
         background: linear-gradient(135deg, #0f3460, #1a5276) !important;
@@ -217,7 +221,7 @@ st.markdown("""
         border-radius: 10px !important;
         font-weight: 600 !important;
         font-size: 0.92rem !important;
-        padding: 10px 28px !important;
+        padding: 8px 14px !important;
         transition: opacity 0.15s !important;
     }
     .stButton > button:hover { opacity: 0.88 !important; }
@@ -228,6 +232,19 @@ st.markdown("""
         border: 1.5px solid #d0d7df !important;
     }
         
+    /* ── Chat scroll + layout helpers ── */
+    .chat-scroll {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding: 10px 6px;
+    }
+    .status-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .input-row { display:flex; gap:8px; align-items:flex-end; }
+    .send-col .stButton>button { padding: 8px 14px !important; font-size:0.9rem !important; }
+    /* More aggressive send button tweaks (may affect other buttons) */
+    .stTextArea, .stTextArea textarea { display: inline-block; }
+    .stButton>button { padding: 6px 10px !important; transform: translateY(4px) !important; min-width: 56px !important; }
+    .stButton>button:focus { outline: none !important; }
     /* ── Sidebar toggle button ── */
     button[kind="header"] {
         background: #0f3460 !important;
@@ -300,9 +317,22 @@ def render_recommendations(recs: list):
         st.markdown(f"**{rec['name']}**  \n{t} — {label}  \n🔗 {rec['url']}")
 
 
-# ── Header ─────────────────────────────────────────────────────────────────────
+# ── Status row + Chat (scrollable HTML block) ──────────────────────────────────
 
-st.markdown("""
+# Status and check button aligned on one row
+# col_status = st.columns([1])[0]
+# with col_status:
+#     if st.session_state.api_ok is None:
+#         st.session_state.api_ok = check_health()
+#     if st.session_state.api_ok:
+#         st.markdown('<div class="status-pill pill-ok"><div class="pill-dot dot-ok"></div>API connected — ready</div>', unsafe_allow_html=True)
+#     else:
+#         st.markdown(f'<div class="status-pill pill-fail"><div class="pill-dot dot-fail"></div>API offline — start your server at {API_BASE}</div>', unsafe_allow_html=True)
+
+# Build a single HTML block for header + messages so the whole area can scroll
+chat_html = []
+chat_html.append('<div class="chat-scroll">')
+chat_html.append('''
 <div class="top-header">
     <div class="icon">🎯</div>
     <div>
@@ -310,66 +340,45 @@ st.markdown("""
         <p>Describe a role and I'll recommend the right SHL Individual Test Solutions for you.</p>
     </div>
 </div>
-""", unsafe_allow_html=True)
+''')
 
-# ── API health status ──────────────────────────────────────────────────────────
+for i, msg in enumerate(st.session_state.messages):
+    if msg["role"] == "user":
+        chat_html.append('<div class="label-user">You</div>')
+        chat_html.append(f'<div class="bubble-user">{msg["content"]}</div>')
+    else:
+        chat_html.append('<div class="label-agent">🎯 Advisor</div>')
+        recs = st.session_state.recs_history.get(i, [])
+        rec_html = ""
+        if recs:
+            rec_items = []
+            for rec in recs:
+                t = rec.get("test_type", "A")
+                label = TYPE_LABELS.get(t, t)
+                rec_items.append(f"<strong>{rec['name']}</strong><br>{t} — {label}<br>🔗 <a href='{rec['url']}' target='_blank'>{rec['url']}</a>")
+            rec_html = "<br><br>" + "<br><br>".join(rec_items)
+        chat_html.append(f'<div class="bubble-agent">{msg["content"]}{rec_html}</div>')
 
-col_status, col_refresh = st.columns([5, 1])
-with col_refresh:
-    if st.button("⟳ Check", key="health_check"):
-        st.session_state.api_ok = check_health()
+if st.session_state.eoc:
+    chat_html.append('<div class="eoc-banner">✅ The advisor has completed your assessment selection. Click <b>New Conversation</b> in the sidebar to start over.</div>')
 
-if st.session_state.api_ok is None:
-    st.session_state.api_ok = check_health()
-
-if st.session_state.api_ok:
-    st.markdown('<div class="status-pill pill-ok"><div class="pill-dot dot-ok"></div>API connected — ready</div>', unsafe_allow_html=True)
-else:
-    st.markdown(f'<div class="status-pill pill-fail"><div class="pill-dot dot-fail"></div>API offline — start your server at {API_BASE}</div>', unsafe_allow_html=True)
-
-# ── Chat history (scrollable container) ────────────────────────────────────────
-
-chat_container = st.container(height=500, border=False)
-with chat_container:
-    for i, msg in enumerate(st.session_state.messages):
-        if msg["role"] == "user":
-            st.markdown('<div class="label-user">You</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="bubble-user">{msg["content"]}</div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div class="label-agent">🎯 Advisor</div>', unsafe_allow_html=True)
-            recs = st.session_state.recs_history.get(i, [])
-            # Build agent bubble with optional recs inside
-            rec_html = ""
-            if recs:
-                rec_items = []
-                for rec in recs:
-                    t = rec.get("test_type", "A")
-                    label = TYPE_LABELS.get(t, t)
-                    rec_items.append(
-                        f"<strong>{rec['name']}</strong><br>{t} — {label}<br>🔗 <a href='{rec['url']}' target='_blank'>{rec['url']}</a>"
-                    )
-                rec_html = "<br><br>" + "<br><br>".join(rec_items)
-
-            st.markdown(f'<div class="bubble-agent">{msg["content"]}{rec_html}</div>', unsafe_allow_html=True)
-
-    # ── End-of-conversation banner ──────────────────────────────────────────────
-    if st.session_state.eoc:
-        st.markdown('<div class="eoc-banner">✅ The advisor has completed your assessment selection. Click <b>New Conversation</b> in the sidebar to start over.</div>', unsafe_allow_html=True)
+chat_html.append('</div>')
+st.markdown("\n".join(chat_html), unsafe_allow_html=True)
 
 # ── Input area (sticky at bottom) ───────────────────────────────────────────────
 
 st.markdown("<br>", unsafe_allow_html=True)
 
 if not st.session_state.eoc:
-    user_input = st.text_area(
-        label="Your message",
-        placeholder='e.g. "I\'m hiring a mid-level Java developer who collaborates with stakeholders"',
-        height=90,
-        label_visibility="collapsed",
-        key="user_input",
-    )
-
-    col_send = st.columns(1)[0]
+    col_input, col_send = st.columns([8, 1])
+    with col_input:
+        user_input = st.text_area(
+            label="Your message",
+            placeholder='e.g. "I\'m hiring a mid-level Java developer who collaborates with stakeholders"',
+            height=64,
+            label_visibility="collapsed",
+            key="user_input",
+        )
     with col_send:
         send_clicked = st.button("Send →", use_container_width=True)
 
@@ -407,6 +416,16 @@ else:
 # ── Sidebar ────────────────────────────────────────────────────────────────────
 
 with st.sidebar:
+    if st.button("⟳ Check", key="health_check", use_container_width=True):
+        st.session_state.api_ok = check_health()
+        st.rerun()
+
+    # show current health status in the sidebar (visual, non-duplicate)
+    if st.session_state.api_ok:
+        st.markdown('<div class="status-pill pill-ok"><div class="pill-dot dot-ok"></div>API connected — ready</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="status-pill pill-fail"><div class="pill-dot dot-fail"></div>API offline — start your server at {API_BASE}</div>', unsafe_allow_html=True)
+
     if st.button("🔄 New Conversation", use_container_width=True):
         st.session_state.messages = []
         st.session_state.recs_history = {}
